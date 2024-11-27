@@ -2,9 +2,9 @@ require('dotenv').config()
 const express = require('express')
 const cors = require("cors")
 const mongoose = require("mongoose");
-const authRoutes = require('./router/auth-router/index');
-const courseRoutes = require('./router/course-router/index')
-const studentRoutes = require('./router/student-router/index')
+const authRoutes = require('./src/router/auth-router/index');
+const courseRoutes = require('./src/router/course-router/index')
+const studentRoutes = require('./src/router/student-router/index')
 
 
 const app = express();
@@ -13,7 +13,7 @@ const MONGO = process.env.MONGO
 
 app.use(
 	cors({
-	  origin: process.env.CLIENT,
+	  origin: process.env.CLIENT || process.env.CLIENT_VERCEL,
 	  methods: ["GET", "POST", "DELETE", "PUT"],
 	  allowedHeaders: ["Content-Type", "Authorization"],
 	})
