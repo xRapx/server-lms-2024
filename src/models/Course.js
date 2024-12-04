@@ -6,6 +6,7 @@ const LectureSchema = new mongoose.Schema({
   videoUrl: String,
   public_id: String,
   freePreview: Boolean,
+  pdfLink: String, 
 });
 
 const CourseSchema = new mongoose.Schema({
@@ -25,6 +26,7 @@ const CourseSchema = new mongoose.Schema({
   welcomeMessage: String,
   objectives: String,
   isPublised: Boolean,
+  lectures: [LectureSchema]
 });
 
 module.exports = mongoose.model("Course", CourseSchema);
