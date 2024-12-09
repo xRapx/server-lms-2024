@@ -65,7 +65,9 @@ const getAllStudentViewCourses = async (req, res) => {
 const getStudentViewCourseDetails = async (req, res) => {
   try {
     const { id } = req.params;
-    const courseDetails = await Course.findById(id);
+    const courseDetails = await Course.findById(id).populate({
+     path:"lectures"
+    });;
 
     if (!courseDetails) {
       return res.status(404).json({
