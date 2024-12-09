@@ -11,6 +11,7 @@ const LessonSchema = new mongoose.Schema({
 const LectureSchema = new mongoose.Schema({
   name : String,
   videoUrl: String,
+  value: String,
   course_name : String,
   course_id: { type: Schema.Types.ObjectId, ref: "Course", required: true },
   lessons :[LessonSchema]
