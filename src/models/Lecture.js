@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const LessonSchema = new mongoose.Schema({
+	name:String,
 	videoUrl: String,
 	public_id: String,
 	freePreview: Boolean,
