@@ -2,6 +2,7 @@ const Subject = require("../../models/Subject");
 const ExamBoard = require("../../models/ExamBoard");
 const Course = require("../../models/Course");
 const Certificate = require("../../models/Certificate");
+const Lecture = require("../../models/Lecture");
 
 const addNewCourse = async (req, res) => {
   try {
@@ -218,16 +219,18 @@ async function createCourse(req, res) {
       subject_name,
       examBoard_name,
       name,
-      lesson,
       category,
       level,
-      primaryLanguage,
       description,
       image,
+      videoUrl,
       welcomeMessage,
       objectives,
       isPublised,
+      lectures
     } = req.body;
+
+    console.log(req.body  )
 
     //find Certificate where name === certificate_name
     const newCert = await Certificate.findOne({ name: certificate_name });
@@ -260,7 +263,6 @@ async function createCourse(req, res) {
         message: "ExamBoard not found!",
       });
     }
-    console.log(newExam)
 
     const course = new Course({
       name,
@@ -270,17 +272,18 @@ async function createCourse(req, res) {
       subject_id: newSub._id,
       certificate_id: newCert._id,
       examBoard_id: newExam._id,
-      lesson,
       category,
       level,
-      primaryLanguage,
       description,
       image,
+      videoUrl,
       welcomeMessage,
       objectives,
       isPublised,
+      lectures,
     });
     await course.save();
+
 
     //course liên kết với examboard
     newExam.courses.push(course._id);
@@ -296,6 +299,98 @@ async function createCourse(req, res) {
   }
 }
 
+async function createLecture(req, res) {
+  //try catch and Create a new certificate with a specific name
+  try {
+    const {
+      certificate_name,
+      subject_name,
+      examBoard_name,
+      course_name,
+      name,
+      lessons,
+      videoUrl
+    } = req.body;
+    console.log(req.body  )
+
+     //find Certificate where name === certificate_name
+     const newCert = await Certificate.findOne({ name: certificate_name });
+     if (!newCert) {
+       return res.status(404).json({
+         success: false,
+         message: "Certificate not found!",
+       });
+     }
+     //find Subject where name === subject_name
+     const newSub = await Subject.findOne({
+       name: subject_name,
+       certificate_id: newCert._id,
+     });
+     if (!newSub) {
+       return res.status(404).json({
+         success: false,
+         message: "Subject not found!",
+       });
+     }
+     //find ExamBoard where name === examBoard_name
+     const newExam = await ExamBoard.findOne({
+       name: examBoard_name,
+       subject_id: newSub._id,
+       certificate_id: newCert._id,
+     });
+     if (!newExam) {
+       return res.status(404).json({
+         success: false,
+         message: "ExamBoard not found!",
+       });
+     }
+     //find ExamBoard where name === examBoard_name
+     const newCourse = await Course.findOne({
+      name: course_name,
+      examBoard_id: newExam._id,
+      subject_id: newSub._id,
+      certificate_id: newCert._id
+    });
+    if (!newCourse) {
+      return res.status(404).json({
+        success: false,
+        message: "Course not found!",
+      });
+    }
+
+    const newLecture = new Lecture({ 
+      examBoard_id: newExam._id,
+      subject_id: newSub._id,
+      certificate_id: newCert._id,
+      course_id: newCourse._id,
+      certificate_name,
+      subject_name,
+      examBoard_name,
+      course_name,
+      name,
+      lessons,
+      videoUrl
+     });
+    await newLecture.save();
+
+    //lecture liên kết với course
+    newCourse.lectures.push(newLecture._id);
+    await newCourse.save();
+
+    res.status(201).json({
+      success: true,
+      message: "Lecture created successfully",
+      data: newLecture,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: "Some error occurred while creating the Lecture",
+    });
+  }
+}
+
 async function dataCourse(req, res) {
   try {
     const course = await Certificate.find().populate({
@@ -304,6 +399,9 @@ async function dataCourse(req, res) {
         path: "examBoards",
         populate: {
           path: "courses",
+          populate:{
+            path:"lectures"
+          }
         },
       },
     });
@@ -328,5 +426,6 @@ module.exports = {
   createSubject,
   createExam,
   createCourse,
+  createLecture,
   dataCourse,
 };

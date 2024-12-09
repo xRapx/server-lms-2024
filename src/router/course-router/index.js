@@ -9,6 +9,7 @@ const {
   createExam,
   createCourse,
   dataCourse,
+  createLecture,
 } = require("../../controllers/course-controller");
 
 const router = express.Router();
@@ -23,6 +24,7 @@ router.post("/create-certificate", createCertificate);
 router.post("/create-subject", createSubject);
 router.post("/create-exam", createExam);
 router.post("/create-course", createCourse);
+router.post("/create-lecture", createLecture);
 
 router.get("/get-data",dataCourse)
 
