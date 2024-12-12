@@ -309,6 +309,7 @@ async function createLecture(req, res) {
       course_name,
       name,
       lessons,
+      questions,
       videoUrl,
       value,
     } = req.body;
@@ -370,6 +371,7 @@ async function createLecture(req, res) {
       course_name,
       name,
       lessons,
+      questions,
       videoUrl,
       value,
      });
